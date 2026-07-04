@@ -1,0 +1,363 @@
+{
+  "datasets": [
+    {
+      "name": "e7b4f4d7",
+      "displayName": "daily_taxi_data_and_routes",
+      "queryLines": [
+        "SELECT pickup_date,\r\n",
+        "      pickup_borough,\r\n",
+        "      dropoff_borough,\r\n",
+        "      CONCAT(pickup_borough, ' - ', dropoff_borough) AS route,\r\n",
+        "      HOUR(tpep_pickup_datetime) AS pickup_hour,\r\n",
+        "      AVG(trip_distance) AS avg_trip_distance,\r\n",
+        "      COUNT(*) AS number_trips,\r\n",
+        "      SUM(total_amount) AS total_revenue\r\n",
+        "FROM gold_db.processed_trips_with_zones\r\n",
+        "WHERE pickup_borough NOT IN ('N/A', 'Unknown')\r\n",
+        "  AND dropoff_borough NOT IN ('N/A', 'Unknown')\r\n",
+        "GROUP BY pickup_date,\r\n",
+        "      pickup_borough,\r\n",
+        "      dropoff_borough,\r\n",
+        "      HOUR(tpep_pickup_datetime);"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "85696e5b",
+      "displayName": "Overview",
+      "layout": [
+        {
+          "widget": {
+            "name": "7bbc01b9",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# **New York Yellow Taxi Data**"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "time",
+            "queries": [
+              {
+                "name": "dashboards/01f177a0dfd41965b16e91f4c22b7fd5/datasets/01f177a116ff1a2e9a2bd96c73ce35c1_pickup_date",
+                "query": {
+                  "datasetName": "e7b4f4d7",
+                  "fields": [
+                    {
+                      "name": "pickup_date",
+                      "expression": "`pickup_date`"
+                    },
+                    {
+                      "name": "pickup_date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Time Range"
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "pickup_date",
+                    "queryName": "dashboards/01f177a0dfd41965b16e91f4c22b7fd5/datasets/01f177a116ff1a2e9a2bd96c73ce35c1_pickup_date"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "tota",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e7b4f4d7",
+                  "fields": [
+                    {
+                      "name": "sum(number_trips)",
+                      "expression": "SUM(`number_trips`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Trips"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(number_trips)",
+                  "style": {
+                    "bold": true,
+                    "fontSize": 24
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 12,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "becea74e",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e7b4f4d7",
+                  "fields": [
+                    {
+                      "name": "pickup_date",
+                      "expression": "`pickup_date`"
+                    },
+                    {
+                      "name": "sum(number_trips)",
+                      "expression": "SUM(`number_trips`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "pickup_date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(number_trips)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "8cec5f3b",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e7b4f4d7",
+                  "fields": [
+                    {
+                      "name": "sum(avg_trip_distance)",
+                      "expression": "SUM(`avg_trip_distance`)"
+                    },
+                    {
+                      "name": "route",
+                      "expression": "`route`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "sum(avg_trip_distance)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "route",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "5f4278a2",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e7b4f4d7",
+                  "fields": [
+                    {
+                      "name": "pickup_hour",
+                      "expression": "`pickup_hour`"
+                    },
+                    {
+                      "name": "sum(number_trips)",
+                      "expression": "SUM(`number_trips`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "pickup_hour",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(number_trips)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "2798060a",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e7b4f4d7",
+                  "fields": [
+                    {
+                      "name": "sum(total_revenue)",
+                      "expression": "SUM(`total_revenue`)"
+                    },
+                    {
+                      "name": "pickup_borough",
+                      "expression": "`pickup_borough`"
+                    },
+                    {
+                      "name": "dropoff_borough",
+                      "expression": "`dropoff_borough`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "heatmap",
+              "encodings": {
+                "x": {
+                  "fieldName": "pickup_borough",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "dropoff_borough",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "color": {
+                  "fieldName": "sum(total_revenue)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 9,
+            "width": 6,
+            "height": 8
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
