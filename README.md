@@ -1,4 +1,3 @@
-````markdown
 # 🚖 NYC Yellow Taxi Analytics avec Databricks
 
 > Pipeline **Data Engineering** de bout en bout construit avec **Databricks**, mettant en œuvre une architecture **Medallion (Bronze → Silver → Gold)** afin de transformer des données brutes en indicateurs métier exploitables.
